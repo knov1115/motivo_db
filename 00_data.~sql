@@ -17,15 +17,3 @@ VALUES (1, 1, 1, 1);
 -- Teljesített gyakorlat rögzítése
 INSERT INTO WORKOUT_RESULTS (RESULT_ID, WORKOUT_EXERCISE_ID, WEIGHT_USED, REPS) 
 VALUES (1, 1, 80.5, 10);
-
-
-
---TRIGGER TESZTELÉSEK
-
---hibaüzenet a hibás email miatt.(TRG_BEFORE_INSERT_USER)--> várt eredmény: HIBA
-INSERT INTO USERS (USER_ID, USERNAME, PASSWORD, EMAIL) 
-VALUES (SEQ_USER_ID.NEXTVAL, 'teszt_user', 'jelszo', 'hibasemail');
-
---edzés törlés tesztelés az esetben ha az ID-hoz van már rendelve eredmény -> várt eredmény: HIBA
-DELETE FROM WORKOUTS WHERE WORKOUT_ID = 1;
-
