@@ -1,0 +1,19 @@
+-- Felhasználók
+INSERT INTO USERS (USER_ID, USERNAME, PASSWORD, EMAIL) 
+VALUES (1, 'user1', 'password123', 'user1@example.com');
+
+-- Edzés hozzáadása
+INSERT INTO WORKOUTS (WORKOUT_ID, USER_ID, WORKOUT_NAME, WORKOUT_DATE) 
+VALUES (1, 1, 'Mell-Bicepsz', TO_DATE('2024-12-29', 'YYYY-MM-DD'));
+
+-- Gyakorlatok hozzáadása
+INSERT INTO EXERCISES (EXERCISE_ID, EXERCISE_NAME) 
+VALUES (1, 'Fekvenyomás');
+
+-- Edzéshez gyakorlat kapcsolása
+INSERT INTO WORKOUT_EXERCISES (WORKOUT_EXERCISE_ID, WORKOUT_ID, EXERCISE_ID, ORDER_NUMBER) 
+VALUES (1, 1, 1, 1);
+
+-- Teljesített gyakorlat rögzítése
+INSERT INTO WORKOUT_RESULTS (RESULT_ID, WORKOUT_EXERCISE_ID, WEIGHT_USED, REPS) 
+VALUES (1, 1, 80.5, 10);
