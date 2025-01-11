@@ -12,7 +12,10 @@ SELECT * FROM WORKOUT_EXERCISES;
 SELECT * FROM WORKOUT_RESULTS;
 --AUDIT LOG TÁBLA
 SELECT * FROM AUDIT_LOG;
-
+--MY_REPORT tábla
+SELECT * FROM MY_REPORT;
+--MY_WORKOUT_REPORT tábla
+SELECT * FROM MY_WORKOUT_REPORT;
 
 
 --VIEW TESZT
@@ -28,53 +31,71 @@ SELECT * FROM EXERCISE_STATS_VIEW;
 
 --FUNCTION TESZT
 --1.
-SELECT GET_TOTAL_REPS_BY_WORKOUT(1) AS TOTAL_REPS FROM DUAL;
+
+SELECT PKG_WORKOUT.GET_TOTAL_REPS_BY_WORKOUT(1) AS total_reps
+FROM DUAL;
+
+
 --2.
-SELECT TOTAL_WEIGHT_BY_USER_WORKOUT(1, 1) AS TOTAL_WEIGHT FROM DUAL;
+
+SELECT PKG_WORKOUT.TOTAL_WEIGHT_BY_USER_WORKOUT(1, 1) AS Total_weight
+FROM DUAL;
 
 
 
 
 --PROC 
 --1.
+
 DECLARE
-    V_TOTAL_WORKOUTS NUMBER;
-    V_TOTAL_EXERCISES NUMBER;
+    v_user_id         NUMBER := 1;        
+    v_total_workouts  NUMBER;
+    v_total_exercises NUMBER;
 BEGIN
-    WORKOUT_AND_EXERCISE_COUNT(4, V_TOTAL_WORKOUTS, V_TOTAL_EXERCISES);
-    DBMS_OUTPUT.PUT_LINE('Osszes edzes: ' || V_TOTAL_WORKOUTS);
-    DBMS_OUTPUT.PUT_LINE('Osszes gyakorlat: ' || V_TOTAL_EXERCISES);
+    PKG_WORKOUT.WORKOUT_AND_EXERCISE_COUNT(
+       P_USER_ID         => v_user_id,
+       P_TOTAL_WORKOUTS  => v_total_workouts,
+       P_TOTAL_EXERCISES => v_total_exercises
+    );
+
+    INSERT INTO MY_REPORT (USER_ID, TOTAL_WORKOUTS, TOTAL_EXERCISES)
+    VALUES (v_user_id, v_total_workouts, v_total_exercises);
+
+    COMMIT;
 END;
 /
+
+
+
 --2.
 BEGIN
-    GENERATE_USER_WORKOUT_REPORT(5);
+    GENERATE_USER_WORKOUT_REPORT(1);  
 END;
 /
 
 
 
+--AUDIT_LOG teszt
+-- sor frissítése a workout táblán
+UPDATE WORKOUTS
+   SET MUSCLE_GROUP_ID = 2     
+ WHERE WORKOUT_ID = 1;         
+
+COMMIT;
+
+-- audit tábla lekérdezése az update után
+SELECT * FROM AUDIT_LOG
+WHERE TABLE_NAME = 'WORKOUTS';
 
 
 
 
 
 
---TRIGGER TESZTELÉSEK
---1. az email nem tartalmaz '@' jelet ezért --> hiba
-INSERT INTO USERS (USERNAME, EMAIL, PASSWORD) 
-VALUES ('testuser', 'invalid_email', 'pass123');
 
---2.
-INSERT INTO WORKOUTS (USER_ID, MUSCLE_GROUP_ID, WORKOUT_DATE)
-VALUES (1, 2, SYSDATE);
 
---3. kapcsolodó eredmények miatt az edzés nem törölhetõ --> hiba
-DELETE FROM WORKOUTS WHERE WORKOUT_ID = 1;
 
---4. meglévõ edzés idejének (vagy bármi más) átállítása --> AUDIT_LOG-ba új rekord kerül.
-UPDATE WORKOUTS SET WORKOUT_DATE = SYSDATE WHERE WORKOUT_ID = 1;
-SELECT * FROM AUDIT_LOG;
+
 
 
 
